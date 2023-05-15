@@ -3,25 +3,26 @@ import React from 'react';
 type props = {
   name:string
 }
-
+const SECURITY_CODE = "asdf123";
 
 const UseState:React.FC<props> = ({name}):React.ReactElement => {
     
   const [error, setError] = React.useState<boolean>(false);
+  const [value, setValue] = React.useState<string>('');
   const [loading, setLoading] = React.useState<boolean>(false)
   
   React.useEffect(() => {
 
     console.log('start effect')
 
-      if(!!loading){ 
+      if(loading){ 
+        setError(false);
         setTimeout(()=>{
-        console.log('start validation')
-        
-        setLoading(false)
-        
-        console.log('end validation')
-      },5000)}
+            if(value !== SECURITY_CODE){
+               setError(true); 
+              };
+              setLoading(false)
+        },3000)}
     
       console.log('end effect')
 
@@ -38,6 +39,8 @@ const UseState:React.FC<props> = ({name}):React.ReactElement => {
           <input
             type="text"
             placeholder="secure code"
+            value={value}
+            onChange={ e => setValue(e.target.value) }
             className="border border-gray-400 shadow py-2 px-10 rounded-2xl mr-7"
           />
           <button
