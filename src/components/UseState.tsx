@@ -3,48 +3,51 @@ import React from 'react';
 type props = {
   name:string
 }
+interface globalState {
+  value: string,
+  error: boolean,
+  loading:boolean
+}
 const SECURITY_CODE = "asdf123";
 
 const UseState:React.FC<props> = ({name}):React.ReactElement => {
-    
-  const [error, setError] = React.useState<boolean>(false);
-  const [value, setValue] = React.useState<string>('');
-  const [loading, setLoading] = React.useState<boolean>(false)
-  
+  const [state, setState] = React.useState<globalState>({
+    value: '',
+    error: false,
+    loading: false
+  })
+
   React.useEffect(() => {
 
-    console.log('start effect')
-
-      if(loading){ 
-        setError(false);
+      if(state.loading){ 
         setTimeout(()=>{
-            if(value !== SECURITY_CODE){
-               setError(true); 
+            if(state.value === SECURITY_CODE){
+              //  setError(true); 
+              setState({...state, error:false, loading:false})
               };
-              setLoading(false)
+              // setLoading(false)
+              setState({...state, loading:false, error:true})
         },3000)}
     
-      console.log('end effect')
-
-  }, [loading])
+  }, [state.loading])
   
   return (
     <div className="border w-full h-[50vh] flex flex-col items-center justify-center space-y-6">
       <h2 className="text-5xl">Eliminar {name}</h2>
       <p className="text-xl">escribe tu codigo de seguridad</p>
       <form onSubmit={(e) => e.preventDefault()}>
-        {error && <p className="text-red-500">wrong code</p>}
-        {loading && <p className="text-red-500">cargando</p>}
+        {(state.error && !state.loading ) && <p className="text-red-500">wrong code</p>}
+        {state.loading && <p className="text-red-500">cargando</p>}
         <div>
           <input
             type="text"
             placeholder="secure code"
-            value={value}
-            onChange={ e => setValue(e.target.value) }
+            value={state.value}
+            onChange={ e => setState({...state, value: e.target.value}) }
             className="border border-gray-400 shadow py-2 px-10 rounded-2xl mr-7"
           />
           <button
-            onClick={() => setLoading(true)}
+            onClick={() => setState({...state, loading:true})}
             className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
           >
             comprobar

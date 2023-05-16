@@ -1,37 +1,42 @@
 import React from 'react';
 import Loading from './Loading';
+const SECURITY_CODE = 'asdf123';
 
 class ClasState extends React.Component {
-  state = { error: false, loading: false };
+  state = { error: false, 
+            loading: false,
+            value: '' };
 
   componentDidUpdate(): void {
     console.log('DidUpdate');
    
     if (this.state.loading) {
       setTimeout(() => {
-        console.log('start validation');
-
-        this.setState({loading:false});
-
-        console.log('end validation');
+        if(SECURITY_CODE === this.state.value){
+          this.setState({error:false, loading:false})
+        } else{
+          this.setState({error:true, loading:false})
+        }
       }, 3000);
     }
   }
 
   render() {
     const { name } = this.props;
-    const { error, loading } = this.state;
+    const { error, loading, value } = this.state;
 
     return (
       <div className="border w-full h-[50vh] flex flex-col items-center justify-center space-y-6">
         <h2 className="text-5xl">Eliminar {name}</h2>
         <p className="text-xl">escribe tu codigo de seguridad</p>
         <form onSubmit={(e) => e.preventDefault()}>
-          {error && <p className="text-red-500">wrong code</p>}
+          {(error && !loading) && <p className="text-red-500">wrong code</p>}
           {loading && <Loading />}
           <div>
             <input
               type="text"
+              value={value}
+              onChange={ e => this.setState({value: e.target.value})}
               placeholder="secure code"
               className="border border-gray-400 shadow py-2 px-10 rounded-2xl mr-7"
             />
