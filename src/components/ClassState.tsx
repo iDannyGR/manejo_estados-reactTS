@@ -12,7 +12,7 @@ class ClasState extends React.Component {
    
     if (this.state.loading) {
       setTimeout(() => {
-        if(SECURITY_CODE === this.state.value){
+        if(this.state.value === SECURITY_CODE){
           this.setState({error:false, loading:false})
         } else{
           this.setState({error:true, loading:false})
