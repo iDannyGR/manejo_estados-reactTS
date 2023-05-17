@@ -1,34 +1,29 @@
 import React from 'react';
-
+import {TYPES, globalState} from '../models/globalState'
 type props = {
   name: string;
 };
-interface globalState {
-  value: string;
-  error: boolean;
-  loading: boolean;
-  delete: boolean;
-  confirmed: boolean;
-}
+
 const SECURITY_CODE = 'asdf123';
 
 const UseReducer: React.FC<props> = ({ name }): React.ReactElement => {
  
     const initialState: globalState = {
-      value: 'paradigma',
+      value: '',
       error: false,
       loading: false,
       delete: false,
       confirmed: false
     };
 
+
     const reducerObject = (state, payload?) => ({
-      CONFIRM: { ...state, error: false, loading: false, confirmed: true },
-      ERROR: { ...state, loading: false, error: true },
-      WRITE: { ...state, value: payload },
-      CHECK: { ...state, loading: true },
-      DELETE: { ...state, delete: true },
-      RESET: { ...state, delete: false, confirmed: false, value: '' }
+      [TYPES.CONFIRM]: { ...state, error: false, loading: false, confirmed: true },
+      [TYPES.ERROR]: { ...state, loading: false, error: true },
+      [TYPES.WRITE]: { ...state, value: payload },
+      [TYPES.CHECK]: { ...state, loading: true },
+      [TYPES.DELETE]: { ...state, delete: true },
+      [TYPES.RESET]: { ...state, delete: false, confirmed: false, value: '' }
     });
 
     const reducer = (state, action) => {
@@ -41,17 +36,20 @@ const UseReducer: React.FC<props> = ({ name }): React.ReactElement => {
   
    const [state, dispatch] = React.useReducer(reducer, initialState);
 
+const onConfirm = () => { dispatch({type:TYPES.CONFIRM})};
+const onError = () => { dispatch({ type: TYPES.ERROR }) };
+const onWrite = ({target:{value}}) => { dispatch({ type: TYPES.WRITE, payload:value})};
+const onCkeck = () => {dispatch({ type: TYPES.CHECK })};
+const onDelete = () => {dispatch({ type: TYPES.DELETE })};
+const onReset = () => {dispatch({ type: TYPES.RESET })};
+
   React.useEffect(() => {
     if (state.loading) {
       setTimeout(() => {
         if (state.value === SECURITY_CODE) {
-          dispatch({
-            type: 'CONFIRM'
-          });
+          onConfirm()
         } else {
-          dispatch({
-            type: 'ERROR'
-          });
+          onError()
         }
       }, 3000);
     }
@@ -70,13 +68,11 @@ const UseReducer: React.FC<props> = ({ name }): React.ReactElement => {
               type="text"
               placeholder="secure code"
               value={state.value}
-              onChange={(e) => dispatch({
-                type:'WRITE', payload: e.target.value 
-              })}
+              onChange={onWrite}
               className="border border-gray-400 shadow py-2 px-10 rounded-2xl mr-7"
             />
             <button
-              onClick={() => dispatch({type:'CHECK'})}
+              onClick={onCkeck}
               className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
             >
               comprobar
@@ -91,13 +87,13 @@ const UseReducer: React.FC<props> = ({ name }): React.ReactElement => {
         <p>Quieres Eliminar el estado?</p>
         <button
           className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
-          onClick={() => dispatch({type:'DELETE'})}
+          onClick={onDelete}
         >
           yes
         </button>
         <button
           className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
-          onClick={() => dispatch({type:'RESET'})}
+          onClick={onReset}
         >
           No
         </button>
@@ -109,7 +105,7 @@ const UseReducer: React.FC<props> = ({ name }): React.ReactElement => {
         <h2 className="text-5xl">Estado Eliminado con Exito</h2>
         <button
           className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
-          onClick={() => dispatch({type:'RESET'})}
+          onClick={onReset}
         >
           Retornar estado
         </button>

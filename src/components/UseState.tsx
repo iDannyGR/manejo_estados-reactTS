@@ -1,15 +1,10 @@
 import React from 'react';
+import { globalState } from '../models/globalState';
 
 type props = {
   name:string
 }
-interface globalState {
-  value: string,
-  error: boolean,
-  loading:boolean,
-  delete: boolean,
-  confirmed: boolean
-}
+
 const SECURITY_CODE = "asdf123";
 
 const UseState:React.FC<props> = ({name}):React.ReactElement => {
